@@ -2,9 +2,9 @@ package com.example.setrep.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val Purple80 = Color(0xFFD0BCFF)
-val PurpleGrey80 = Color(0xFFCCC2DC)
-val Pink80 = Color(0xFFEFB8C8)
+val lightPrimary = Color(0xFF150578)
+val lightSecondary = Color(0xFF5E2BFF)
+val lightTertiary = Color(0xFF44CF6C)
 
 val Purple40 = Color(0xFF6650a4)
 val PurpleGrey40 = Color(0xFF625b71)
