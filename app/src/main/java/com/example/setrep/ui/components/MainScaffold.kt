@@ -35,7 +35,7 @@ fun MainScaffold(
         floatingActionButton = {
             ExtendedFloatingActionButton(
                 onClick = {
-                    navController.navigate(Screen.NewWorkout.route) {
+                    navController.navigate(Screen.Workout.route) {
                         popUpTo(navController.graph.findStartDestination().id) {
                             saveState = true
                         }

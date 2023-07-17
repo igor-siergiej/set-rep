@@ -15,6 +15,8 @@ import androidx.navigation.compose.rememberNavController
 import com.example.setrep.navigation.Screen
 import com.example.setrep.ui.theme.SetRepTheme
 import com.example.setrep.views.HomeScreenTopLevel
+import com.example.setrep.views.WorkoutScreen
+import com.example.setrep.views.WorkoutScreenTopLevel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -59,6 +61,7 @@ private fun BuildNavigationGraph(
         startDestination = startingDestination
     ) {
         composable(Screen.Home.route) { HomeScreenTopLevel(navController) }
+        composable(Screen.Workout.route) { WorkoutScreenTopLevel(navController) }
 
     }
 }
