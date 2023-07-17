@@ -22,7 +22,6 @@ import com.example.setrep.ui.theme.SetRepTheme
 @Composable
 fun MainScaffold(
     navController: NavController,
-    titleText: String,
     pageContent: @Composable (innerPadding: PaddingValues) -> Unit = {}
 ) {
     Scaffold(
@@ -59,6 +58,6 @@ fun MainScaffold(
 private fun MainScaffoldPreview() {
     SetRepTheme() {
         val navController = rememberNavController()
-        MainScaffold(navController = navController, titleText = "test", pageContent = {})
+        MainScaffold(navController = navController, pageContent = {})
     }
 }

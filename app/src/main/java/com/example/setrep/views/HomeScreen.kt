@@ -26,8 +26,7 @@ fun HomeScreen(
     navController: NavController
 ) {
     MainScaffold(
-        navController = navController,
-        titleText = stringResource(id = R.string.app_name)
+        navController = navController
     ) { innerPadding ->
         Surface(
             modifier = Modifier

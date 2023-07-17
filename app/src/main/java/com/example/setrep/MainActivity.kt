@@ -18,6 +18,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.setrep.model.Exercise
 import com.example.setrep.navigation.Screen
 import com.example.setrep.ui.theme.SetRepTheme
+import com.example.setrep.views.AddNewExerciseScreenTopLevel
 import com.example.setrep.views.HomeScreenTopLevel
 import com.example.setrep.views.WorkoutScreenTopLevel
 import kotlinx.coroutines.launch
@@ -80,8 +81,8 @@ private fun BuildNavigationGraph(
         startDestination = startingDestination
     ) {
         composable(Screen.Home.route) { HomeScreenTopLevel(navController) }
-        composable(Screen.Workout.route) { WorkoutScreenTopLevel(navController, exercises) }
-
+        composable(Screen.Workout.route) { WorkoutScreenTopLevel(navController) }
+        composable(Screen.NewExercise.route) { AddNewExerciseScreenTopLevel(navController, exercises) }
     }
 }
 
