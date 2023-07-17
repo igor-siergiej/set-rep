@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
@@ -15,8 +14,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.setrep.navigation.Screen
 import com.example.setrep.ui.theme.SetRepTheme
-import com.example.setrep.views.StartScreen
-import kotlinx.coroutines.launch
+import com.example.setrep.views.HomeScreenTopLevel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -60,6 +58,7 @@ private fun BuildNavigationGraph(
         navController = navController,
         startDestination = startingDestination
     ) {
-        composable(Screen.Home.route) { StartScreen(navController) }
+        composable(Screen.Home.route) { HomeScreenTopLevel(navController) }
+
     }
 }
