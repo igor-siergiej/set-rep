@@ -1,6 +1,7 @@
 package com.example.setrep.navigation
 
 sealed class Screen(val route: String) {
+    object Start : Screen("start")
 
     object Home : Screen("home")
     object Statistics : Screen("statistics")

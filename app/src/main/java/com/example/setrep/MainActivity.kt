@@ -1,7 +1,6 @@
 package com.example.setrep
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,14 +11,17 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.setrep.datasource.ProfileViewModel
 import com.example.setrep.model.Exercise
 import com.example.setrep.navigation.Screen
 import com.example.setrep.ui.theme.SetRepTheme
 import com.example.setrep.views.AddNewExerciseScreenTopLevel
 import com.example.setrep.views.HomeScreenTopLevel
+import com.example.setrep.views.StartScreenTopLevel
 import com.example.setrep.views.WorkoutScreenTopLevel
 import kotlinx.coroutines.launch
 import java.io.InputStream
@@ -44,7 +46,7 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 private fun BuildNavigationGraph(
-    // viewModels?
+    profileViewModel: ProfileViewModel = viewModel()
 ) {
     // The NavController is in a place where all
     // our composables can access it.
@@ -74,15 +76,21 @@ private fun BuildNavigationGraph(
     // the NavHost is automatically recomposed.
     // Each composable destination in the graph is associated with a route.
 
-    var startingDestination = Screen.Home.route
+    profileViewModel.deleteProfile()
+    var startingDestination = Screen.Start.route
+    if (profileViewModel.doesFileExist()) {
+        startingDestination = Screen.Home.route
+        profileViewModel.loadProfile()
+    }
 
     NavHost(
         navController = navController,
         startDestination = startingDestination
     ) {
-        composable(Screen.Home.route) { HomeScreenTopLevel(navController) }
+        composable(Screen.Home.route) { HomeScreenTopLevel(navController,profileViewModel) }
         composable(Screen.Workout.route) { WorkoutScreenTopLevel(navController) }
         composable(Screen.NewExercise.route) { AddNewExerciseScreenTopLevel(navController, exercises) }
+        composable(Screen.Start.route) { StartScreenTopLevel(navController, profileViewModel) }
     }
 }
 

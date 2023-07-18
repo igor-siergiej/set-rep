@@ -2,10 +2,8 @@ package com.example.setrep.ui.components
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AreaChart
-import androidx.compose.material.icons.filled.EditCalendar
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.outlined.AreaChart
-import androidx.compose.material.icons.outlined.EditCalendar
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -13,7 +11,10 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -25,6 +26,7 @@ import com.example.setrep.navigation.screens
 fun NavigationBar(
     navController: NavController
 ) {
+    val context = LocalContext.current
     val icons = mapOf(
         Screen.Home to IconGroup(
             filledIcon = Icons.Filled.Home,
@@ -37,8 +39,8 @@ fun NavigationBar(
             label = stringResource(id = R.string.statistics)
         ),
         Screen.Calendar to IconGroup(
-            filledIcon = Icons.Filled.EditCalendar,
-            outlineIcon = Icons.Outlined.EditCalendar,
+            filledIcon = ImageVector.vectorResource(id = R.drawable.baseline_calendar_month_24),
+            outlineIcon = ImageVector.vectorResource(id = R.drawable.outline_calendar_month_24),
             label = stringResource(id = R.string.calendar)
         )
     )
