@@ -1,6 +1,7 @@
 package com.example.setrep.views
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -14,9 +15,11 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -24,6 +27,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.stringResource
@@ -32,8 +36,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.setrep.R
 import com.example.setrep.model.Exercise
+import com.example.setrep.ui.components.EmptyScaffold
+import com.example.setrep.ui.components.EmptyTopBar
 import com.example.setrep.ui.components.MainScaffold
 
 @Composable
@@ -52,8 +59,7 @@ fun AddNewExerciseScreen(
     navController: NavController,
     exercises: List<Exercise>
 ) {
-    MainScaffold(
-        navController = navController
+    EmptyScaffold(
     ) { innerPadding ->
         Surface(
             modifier = Modifier
@@ -73,17 +79,41 @@ private fun AddNewExerciseScreenContent(
     modifier: Modifier = Modifier,
     exercises: List<Exercise>
 ) {
-    val textState = remember { mutableStateOf(TextFieldValue("test")) }
+
+
+
+
+    val textState = remember { mutableStateOf(TextFieldValue("")) }
 
 
     Column {
-        Text(text = stringResource(id = R.string.new_exercise))
+
+        EmptyTopBar(stringResource(id = R.string.search_exercise))
         SearchView(state = textState)
         ExerciseList(
             exerciseList = exercises,
             modifier = Modifier.padding(8.dp),
             state = textState
         )
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(0.dp, 0.dp, 0.dp, 20.dp),
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Button(onClick = {
+
+            }) {
+                Text(text = stringResource(id = R.string.new_exercise))
+            }
+            OutlinedButton(onClick = {
+
+            }) {
+                Text(text = stringResource(id = R.string.finish_workout))
+            }
+        }
     }
 
     /*Column() {
@@ -106,7 +136,7 @@ fun SearchView(state: MutableState<TextFieldValue>) {
         leadingIcon = {
             Icon(
                 Icons.Default.Search,
-                contentDescription = "",
+                contentDescription = "Search",
                 modifier = Modifier
                     .padding(15.dp)
                     .size(24.dp)
@@ -117,21 +147,22 @@ fun SearchView(state: MutableState<TextFieldValue>) {
                 IconButton(
                     onClick = {
                         state.value =
-                            TextFieldValue("") // Remove text from TextField when you press the 'X' icon
+                            TextFieldValue("")
                     }
                 ) {
                     Icon(
                         Icons.Default.Close,
-                        contentDescription = "",
+                        contentDescription = "Close",
                         modifier = Modifier
                             .padding(15.dp)
                             .size(24.dp)
+
                     )
                 }
             }
         },
         singleLine = true,
-        shape = RectangleShape // The TextFiled has rounded corners top left and right by default
+        shape = RectangleShape
     )
 }
 
@@ -143,10 +174,10 @@ fun SearchViewPreview() {
 }
 
 @Composable
-fun ExerciseItem(exercise: Exercise, onItemClick: (String) -> Unit) {
+fun ExerciseItem(exercise: Exercise, onItemClick: (Exercise) -> Unit) {
     Row(
         modifier = Modifier
-            .clickable(onClick = { onItemClick(exercise.title) })
+            .clickable(onClick = { onItemClick(exercise) })
             .height(57.dp)
             .fillMaxWidth()
             .padding(PaddingValues(8.dp, 16.dp))
@@ -161,13 +192,12 @@ private fun ExerciseList(
     modifier: Modifier = Modifier,
     state: MutableState<TextFieldValue>
 ) {
-    var exerciseArrayList = exerciseList as ArrayList<Exercise>
     var filteredCountries: ArrayList<Exercise>
 
     LazyColumn(modifier = Modifier.fillMaxWidth()) {
         val searchedText = state.value.text
 
-        filteredCountries = if (searchedText.isEmpty()) ( exerciseArrayList ) else {
+        filteredCountries = if (searchedText.isEmpty()) ( ArrayList() ) else {
 
             val resultList = ArrayList<Exercise>()
             for (exercise in exerciseList) {
@@ -182,11 +212,18 @@ private fun ExerciseList(
             ExerciseItem(
                 exercise = filteredExercise,
                 onItemClick = { selectedExercise ->
-                    /* Add code later */
+                    state.value = TextFieldValue("")
                 }
             )
         }
     }
+}
+
+@Preview
+@Composable
+fun AddNewExerciseScreenPreview() {
+    var navController = rememberNavController()
+    AddNewExerciseScreen(navController = navController, exercises = ArrayList())
 }
 
 

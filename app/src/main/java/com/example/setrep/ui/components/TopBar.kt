@@ -1,6 +1,7 @@
 package com.example.setrep.ui.components
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -57,6 +58,30 @@ fun TopBar(
             }
             button()
         }
+    }
+}
+
+@Composable
+fun EmptyTopBar(title: String) {
+    Card(
+        shape = RectangleShape,
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(75.dp)
+            .padding(10.dp),
+
+    ) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = title,
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.headlineSmall
+            )
+        }
+
     }
 }
 

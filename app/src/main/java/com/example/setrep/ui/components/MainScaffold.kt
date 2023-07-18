@@ -94,6 +94,18 @@ fun StartScreenScaffold(
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun EmptyScaffold(
+    pageContent: @Composable (innerPadding: PaddingValues) -> Unit = {}
+) {
+    Scaffold(
+        content = { innerPadding ->
+            pageContent(innerPadding)
+        }
+    )
+}
+
 @Preview
 @Composable
 private fun MainScaffoldPreview() {
