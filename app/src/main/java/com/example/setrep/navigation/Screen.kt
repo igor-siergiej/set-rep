@@ -9,6 +9,7 @@ sealed class Screen(val route: String) {
 
     object Workout : Screen("workout")
     object NewExercise : Screen("newExercise")
+    object Profile : Screen("profile")
 
 }
 

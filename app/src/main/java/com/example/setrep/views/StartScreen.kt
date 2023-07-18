@@ -74,8 +74,8 @@ private fun StartScreenContent(
             label = {Text(stringResource(id = R.string.enter_profile_name))},
             singleLine = true
         )
-
-        Button(onClick = {
+        Button(
+            onClick = {
             profileViewModel.profile.setName(state.value.text)
             profileViewModel.saveProfile()
             navController.navigate(Screen.Home.route) {

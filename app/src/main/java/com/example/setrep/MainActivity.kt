@@ -20,8 +20,11 @@ import com.example.setrep.model.Exercise
 import com.example.setrep.navigation.Screen
 import com.example.setrep.ui.theme.SetRepTheme
 import com.example.setrep.views.AddNewExerciseScreenTopLevel
+import com.example.setrep.views.CalendarScreenTopLevel
 import com.example.setrep.views.HomeScreenTopLevel
+import com.example.setrep.views.ProfileScreenTopLevel
 import com.example.setrep.views.StartScreenTopLevel
+import com.example.setrep.views.StatisticsScreenTopLevel
 import com.example.setrep.views.WorkoutScreenTopLevel
 import kotlinx.coroutines.launch
 import java.io.InputStream
@@ -91,6 +94,9 @@ private fun BuildNavigationGraph(
         composable(Screen.Workout.route) { WorkoutScreenTopLevel(navController) }
         composable(Screen.NewExercise.route) { AddNewExerciseScreenTopLevel(navController, exercises) }
         composable(Screen.Start.route) { StartScreenTopLevel(navController, profileViewModel) }
+        composable(Screen.Calendar.route) { CalendarScreenTopLevel(navController, profileViewModel) }
+        composable(Screen.Statistics.route) { StatisticsScreenTopLevel(navController, profileViewModel) }
+        composable(Screen.Profile.route) { ProfileScreenTopLevel(navController, profileViewModel) }
     }
 }
 
