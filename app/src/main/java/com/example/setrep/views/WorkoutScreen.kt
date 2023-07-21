@@ -73,18 +73,17 @@ fun WorkoutScreen(
         WorkoutScreenContent(
             modifier = Modifier.padding(8.dp),
             navController = navController,
-            selectedExercises = workoutViewModel.workout.value.exercises,
+            workoutViewModel = workoutViewModel,
             time = time
         )
     }
 }
 
-
 @Composable
 private fun WorkoutScreenContent(
     modifier: Modifier = Modifier,
     navController: NavController,
-    selectedExercises: ArrayList<Exercise>,
+    workoutViewModel: WorkoutViewModel,
     time: Int
 ) {
 
@@ -118,7 +117,7 @@ private fun WorkoutScreenContent(
         LazyColumn(
             modifier = Modifier.fillMaxWidth()
         ) {
-            items(selectedExercises) {
+            items(workoutViewModel.getExercises()) {
                 Card(
                     shape = RectangleShape,
                     modifier = Modifier
@@ -159,7 +158,14 @@ private fun WorkoutScreenContent(
                 Text(text = stringResource(id = R.string.new_exercise))
             }
             OutlinedButton(onClick = {
-
+                workoutViewModel.clear()
+                navController.navigate(Screen.Home.route) {
+                    popUpTo(navController.graph.findStartDestination().id) {
+                        saveState = true
+                    }
+                    launchSingleTop = true
+                    restoreState = true
+                }
             }) {
                 Text(text = stringResource(id = R.string.finish_workout))
             }
@@ -170,8 +176,8 @@ private fun WorkoutScreenContent(
 @Composable
 @Preview
 fun WorkoutScreenPreview() {
-    var navController = rememberNavController()
-    var workoutViewModel: WorkoutViewModel = viewModel()
+    val navController = rememberNavController()
+    val workoutViewModel: WorkoutViewModel = viewModel()
     WorkoutScreen(
         navController = navController,
         workoutViewModel = workoutViewModel,

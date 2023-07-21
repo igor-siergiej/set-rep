@@ -129,6 +129,7 @@ private fun AddNewExerciseScreenContent(
         ) {
             Button(onClick = {
                 workoutViewModel.addExercise(selectedExercise.value)
+                // TODO REMOVE THIS CODE DUPLICATION, HOIST STATE
                 navController.navigate("${Screen.Workout.route}/${ticks}") {
                     popUpTo(navController.graph.findStartDestination().id) {
                         saveState = true

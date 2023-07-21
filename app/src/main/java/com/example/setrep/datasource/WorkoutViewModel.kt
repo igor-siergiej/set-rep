@@ -9,6 +9,14 @@ class WorkoutViewModel : ViewModel() {
     var workout = mutableStateOf(Workout())
 
     fun addExercise(exercise: Exercise) {
-        workout.value?.exercises?.add(exercise)
+        workout.value.exercises.add(exercise)
+    }
+
+    fun getExercises(): ArrayList<Exercise> {
+        return workout.value.exercises
+    }
+
+    fun clear() {
+        workout.value.exercises.clear()
     }
 }
