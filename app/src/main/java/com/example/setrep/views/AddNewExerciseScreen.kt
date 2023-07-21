@@ -20,18 +20,16 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -41,8 +39,6 @@ import com.example.setrep.R
 import com.example.setrep.model.Exercise
 import com.example.setrep.ui.components.EmptyScaffold
 import com.example.setrep.ui.components.EmptyTopBar
-import com.example.setrep.ui.components.MainScaffold
-
 @Composable
 fun AddNewExerciseScreenTopLevel(
     navController: NavController,
@@ -83,18 +79,23 @@ private fun AddNewExerciseScreenContent(
 
 
 
-    val textState = remember { mutableStateOf(TextFieldValue("")) }
-
+    val textState = remember { mutableStateOf("") }
+    val active = remember { mutableStateOf(false) }
+    var selectedExercise = remember{ mutableStateOf(Exercise()) }
 
     Column {
 
         EmptyTopBar(stringResource(id = R.string.search_exercise))
-        SearchView(state = textState)
-        ExerciseList(
-            exerciseList = exercises,
-            modifier = Modifier.padding(8.dp),
-            state = textState
+
+        SearchView(
+            text = textState,
+            active = active,
+            exercises = exercises,
+            selectedExercise = selectedExercise
         )
+
+        Text(text = selectedExercise.value.title)
+
 
         Row(
             modifier = Modifier
@@ -123,13 +124,26 @@ private fun AddNewExerciseScreenContent(
     }*/
 }
 
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchView(state: MutableState<TextFieldValue>) {
-    TextField(
-        value = state.value,
-        onValueChange = { value ->
-            state.value = value
+fun SearchView(
+    text: MutableState<String>,
+    active: MutableState<Boolean>,
+    exercises: List<Exercise>,
+    selectedExercise: MutableState<Exercise>) {
+
+    SearchBar(
+        query = text.value,
+        onQueryChange = { value ->
+            text.value = value
+        },
+        onSearch = {
+            active.value = false
+        },
+        active = active.value,
+        onActiveChange = {
+                         active.value = it
         },
         modifier = Modifier
             .fillMaxWidth(),
@@ -142,12 +156,18 @@ fun SearchView(state: MutableState<TextFieldValue>) {
                     .size(24.dp)
             )
         },
+        placeholder = {
+            Text(text = "Search Exercise")
+        },
         trailingIcon = {
-            if (state.value != TextFieldValue("")) {
+            if (active.value) {
                 IconButton(
                     onClick = {
-                        state.value =
-                            TextFieldValue("")
+                        if (text.value.isNotEmpty()) {
+                            text.value = ""
+                        } else {
+                            active.value = false
+                        }
                     }
                 ) {
                     Icon(
@@ -160,17 +180,25 @@ fun SearchView(state: MutableState<TextFieldValue>) {
                     )
                 }
             }
-        },
-        singleLine = true,
-        shape = RectangleShape
-    )
+        }
+    ) {
+        ExerciseList(
+            exerciseList = exercises,
+            text = text,
+            selectedExercise = selectedExercise,
+            isSearchActive = active
+        )
+    }
 }
 
 @Preview(showBackground = true)
 @Composable
 fun SearchViewPreview() {
-    val textState = remember { mutableStateOf(TextFieldValue("test")) }
-    SearchView(textState)
+    val textState = remember { mutableStateOf("test") }
+    val exercise = remember { mutableStateOf(Exercise()) }
+    val active = remember { mutableStateOf(false) }
+    val exercises = emptyList<Exercise>()
+    SearchView(textState,active,exercises,exercise)
 }
 
 @Composable
@@ -189,13 +217,14 @@ fun ExerciseItem(exercise: Exercise, onItemClick: (Exercise) -> Unit) {
 @Composable
 private fun ExerciseList(
     exerciseList: List<Exercise>,
-    modifier: Modifier = Modifier,
-    state: MutableState<TextFieldValue>
+    text: MutableState<String>,
+    selectedExercise: MutableState<Exercise>,
+    isSearchActive: MutableState<Boolean>
 ) {
     var filteredCountries: ArrayList<Exercise>
 
     LazyColumn(modifier = Modifier.fillMaxWidth()) {
-        val searchedText = state.value.text
+        val searchedText = text.value
 
         filteredCountries = if (searchedText.isEmpty()) ( ArrayList() ) else {
 
@@ -211,8 +240,10 @@ private fun ExerciseList(
         items(filteredCountries) { filteredExercise ->
             ExerciseItem(
                 exercise = filteredExercise,
-                onItemClick = { selectedExercise ->
-                    state.value = TextFieldValue("")
+                onItemClick = { exercise ->
+                    selectedExercise.value = exercise
+                    text.value = exercise.title
+                    isSearchActive.value = false
                 }
             )
         }
