@@ -31,7 +31,6 @@ import androidx.navigation.compose.rememberNavController
 import com.example.setrep.navigation.Screen
 import com.example.setrep.ui.theme.SetRepTheme
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScaffold(
     navController: NavController,
@@ -47,7 +46,7 @@ fun MainScaffold(
         floatingActionButton = {
             ExtendedFloatingActionButton(
                 onClick = {
-                    navController.navigate(Screen.Workout.route) {
+                    navController.navigate("${Screen.Workout.route}/0") {
                         popUpTo(navController.graph.findStartDestination().id) {
                             saveState = true
                         }
@@ -94,7 +93,7 @@ fun StartScreenScaffold(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+
 @Composable
 fun EmptyScaffold(
     pageContent: @Composable (innerPadding: PaddingValues) -> Unit = {}

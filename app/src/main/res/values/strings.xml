@@ -4,11 +4,12 @@
     <string name="statistics">Statistics</string>
     <string name="calendar">Calendar</string>
     <string name="new_workout">Start New Workout</string>
-    <string name="workout">New Workout!</string>
+    <string name="workout">Workout</string>
     <string name="new_exercise">Add New Exercise</string>
     <string name="welcome">Welcome to SetRep!</string>
     <string name="create_profile">Create Profile</string>
     <string name="enter_profile_name">Enter your profile name</string>
     <string name="finish_workout">Finish Workout</string>
     <string name="search_exercise">Add New Exercise</string>
+    <string name="go_back">Go Back!</string>
 </resources>

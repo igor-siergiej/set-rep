@@ -12,10 +12,13 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.setrep.datasource.ProfileViewModel
+import com.example.setrep.datasource.WorkoutViewModel
 import com.example.setrep.model.Exercise
 import com.example.setrep.navigation.Screen
 import com.example.setrep.ui.theme.SetRepTheme
@@ -49,7 +52,8 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 private fun BuildNavigationGraph(
-    profileViewModel: ProfileViewModel = viewModel()
+    profileViewModel: ProfileViewModel = viewModel(),
+    workoutViewModel: WorkoutViewModel = viewModel()
 ) {
     // The NavController is in a place where all
     // our composables can access it.
@@ -72,7 +76,6 @@ private fun BuildNavigationGraph(
     }
 
 
-
     // Each NavController is associated with a NavHost.
     // This links the NavController with a navigation graph.
     // As we navigate between composables the content of
@@ -90,12 +93,53 @@ private fun BuildNavigationGraph(
         navController = navController,
         startDestination = startingDestination
     ) {
-        composable(Screen.Home.route) { HomeScreenTopLevel(navController,profileViewModel) }
-        composable(Screen.Workout.route) { WorkoutScreenTopLevel(navController) }
-        composable(Screen.NewExercise.route) { AddNewExerciseScreenTopLevel(navController, exercises) }
+        composable(Screen.Home.route) { HomeScreenTopLevel(navController, profileViewModel) }
+
+        composable(
+            route = "${Screen.Workout.route}/{time}",
+            arguments = listOf(
+                navArgument("time") {
+                    type = NavType.IntType
+                }
+            )
+        ) { backStackEntry ->
+            WorkoutScreenTopLevel(
+                navController = navController,
+                workoutViewModel = workoutViewModel,
+                time = backStackEntry.arguments?.getInt("time")!!
+            )
+        }
+
+        composable(
+            route = "${Screen.NewExercise.route}/{time}",
+            arguments = listOf(
+                navArgument("time") {
+                    type = NavType.IntType
+                }
+            )
+        ) { backStackEntry ->
+            AddNewExerciseScreenTopLevel(
+                navController = navController,
+                exercises = exercises,
+                workoutViewModel = workoutViewModel,
+                time = backStackEntry.arguments?.getInt("time")!!
+            )
+        }
+
         composable(Screen.Start.route) { StartScreenTopLevel(navController, profileViewModel) }
-        composable(Screen.Calendar.route) { CalendarScreenTopLevel(navController, profileViewModel) }
-        composable(Screen.Statistics.route) { StatisticsScreenTopLevel(navController, profileViewModel) }
+
+        composable(Screen.Calendar.route) {
+            CalendarScreenTopLevel(
+                navController,
+                profileViewModel
+            )
+        }
+        composable(Screen.Statistics.route) {
+            StatisticsScreenTopLevel(
+                navController,
+                profileViewModel
+            )
+        }
         composable(Screen.Profile.route) { ProfileScreenTopLevel(navController, profileViewModel) }
     }
 }
@@ -107,7 +151,11 @@ fun readCsv(inputStream: InputStream): List<Exercise> {
     return reader.lineSequence()
         .filter { it.isNotBlank() }
         .map {
-            val (title,description,type,bodyPartWorked,equipment,level) = it.split(',', ignoreCase = false, limit = 6)
+            val (title, description, type, bodyPartWorked, equipment, level) = it.split(
+                ',',
+                ignoreCase = false,
+                limit = 6
+            )
             Exercise(title, description, type, bodyPartWorked, equipment, level)
         }.toList()
 }

@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -24,47 +25,62 @@ import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.rememberNavController
 import com.example.setrep.R
+import com.example.setrep.datasource.WorkoutViewModel
 import com.example.setrep.model.Exercise
+import com.example.setrep.navigation.Screen
 import com.example.setrep.ui.components.EmptyScaffold
 import com.example.setrep.ui.components.EmptyTopBar
+import kotlinx.coroutines.delay
+import java.util.Date
+
 @Composable
 fun AddNewExerciseScreenTopLevel(
     navController: NavController,
-    exercises: List<Exercise>
+    exercises: List<Exercise>,
+    workoutViewModel: WorkoutViewModel,
+    time: Int
 ) {
     AddNewExerciseScreen(
         navController = navController,
-        exercises = exercises
+        exercises = exercises,
+        workoutViewModel = workoutViewModel,
+        time = time
     )
 }
 
 @Composable
 fun AddNewExerciseScreen(
     navController: NavController,
-    exercises: List<Exercise>
+    exercises: List<Exercise>,
+    workoutViewModel: WorkoutViewModel,
+    time: Int
 ) {
-    EmptyScaffold(
-    ) { innerPadding ->
+    EmptyScaffold {
         Surface(
-            modifier = Modifier
-                .padding(innerPadding)
-                .fillMaxSize()
+            modifier = Modifier.fillMaxSize()
         ) {
             AddNewExerciseScreenContent(
-                modifier = Modifier.padding(8.dp),
-                exercises = exercises
+                exercises = exercises,
+                navController = navController,
+                workoutViewModel = workoutViewModel,
+                time = time
             )
         }
     }
@@ -72,16 +88,22 @@ fun AddNewExerciseScreen(
 
 @Composable
 private fun AddNewExerciseScreenContent(
-    modifier: Modifier = Modifier,
-    exercises: List<Exercise>
+    exercises: List<Exercise>,
+    navController: NavController,
+    workoutViewModel: WorkoutViewModel,
+    time: Int
 ) {
-
-
-
+    var ticks by remember { mutableStateOf(time) }
+    LaunchedEffect(Unit) {
+        while (true) {
+            delay(1000 - Date().time % 1000)
+            ticks++
+        }
+    }
 
     val textState = remember { mutableStateOf("") }
     val active = remember { mutableStateOf(false) }
-    var selectedExercise = remember{ mutableStateOf(Exercise()) }
+    val selectedExercise = remember { mutableStateOf(Exercise()) }
 
     Column {
 
@@ -96,6 +118,7 @@ private fun AddNewExerciseScreenContent(
 
         Text(text = selectedExercise.value.title)
 
+        Spacer(modifier = Modifier.weight(1f))
 
         Row(
             modifier = Modifier
@@ -105,23 +128,30 @@ private fun AddNewExerciseScreenContent(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Button(onClick = {
-
+                workoutViewModel.addExercise(selectedExercise.value)
+                navController.navigate("${Screen.Workout.route}/${ticks}") {
+                    popUpTo(navController.graph.findStartDestination().id) {
+                        saveState = true
+                    }
+                    launchSingleTop = true
+                    restoreState = true
+                }
             }) {
                 Text(text = stringResource(id = R.string.new_exercise))
             }
             OutlinedButton(onClick = {
-
+                navController.navigate("${Screen.Workout.route}/${ticks}") {
+                    popUpTo(navController.graph.findStartDestination().id) {
+                        saveState = true
+                    }
+                    launchSingleTop = true
+                    restoreState = true
+                }
             }) {
-                Text(text = stringResource(id = R.string.finish_workout))
+                Text(text = stringResource(id = R.string.go_back))
             }
         }
     }
-
-    /*Column() {
-        for (exercise: Exercise in exercises) {
-            Text(text = exercise.toString())
-        }
-    }*/
 }
 
 
@@ -131,7 +161,8 @@ fun SearchView(
     text: MutableState<String>,
     active: MutableState<Boolean>,
     exercises: List<Exercise>,
-    selectedExercise: MutableState<Exercise>) {
+    selectedExercise: MutableState<Exercise>
+) {
 
     SearchBar(
         query = text.value,
@@ -143,7 +174,7 @@ fun SearchView(
         },
         active = active.value,
         onActiveChange = {
-                         active.value = it
+            active.value = it
         },
         modifier = Modifier
             .fillMaxWidth(),
@@ -198,7 +229,7 @@ fun SearchViewPreview() {
     val exercise = remember { mutableStateOf(Exercise()) }
     val active = remember { mutableStateOf(false) }
     val exercises = emptyList<Exercise>()
-    SearchView(textState,active,exercises,exercise)
+    SearchView(textState, active, exercises, exercise)
 }
 
 @Composable
@@ -226,7 +257,7 @@ private fun ExerciseList(
     LazyColumn(modifier = Modifier.fillMaxWidth()) {
         val searchedText = text.value
 
-        filteredCountries = if (searchedText.isEmpty()) ( ArrayList() ) else {
+        filteredCountries = if (searchedText.isEmpty()) (ArrayList()) else {
 
             val resultList = ArrayList<Exercise>()
             for (exercise in exerciseList) {
@@ -253,13 +284,19 @@ private fun ExerciseList(
 @Preview
 @Composable
 fun AddNewExerciseScreenPreview() {
-    var navController = rememberNavController()
-    AddNewExerciseScreen(navController = navController, exercises = ArrayList())
+    val navController = rememberNavController()
+    val workoutViewModel: WorkoutViewModel = viewModel()
+    AddNewExerciseScreen(
+        navController = navController,
+        exercises = ArrayList(),
+        workoutViewModel,
+        0
+    )
 }
 
 
 @Preview
 @Composable
 private fun ExerciseItemPreview() {
-    ExerciseItem(Exercise("test", "test", "test", "test", "test", "test"), {})
+    ExerciseItem(Exercise("test", "test", "test", "test", "test", "test")) {}
 }

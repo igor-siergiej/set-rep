@@ -67,9 +67,7 @@ fun EmptyTopBar(title: String) {
         shape = RectangleShape,
         modifier = Modifier
             .fillMaxWidth()
-            .height(75.dp)
-            .padding(10.dp),
-
+            .height(75.dp),
     ) {
         Box(
             modifier = Modifier.fillMaxSize(),
@@ -81,7 +79,6 @@ fun EmptyTopBar(title: String) {
                 style = MaterialTheme.typography.headlineSmall
             )
         }
-
     }
 }
 
