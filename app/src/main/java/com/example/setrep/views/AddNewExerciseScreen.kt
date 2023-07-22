@@ -13,7 +13,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
@@ -117,51 +119,56 @@ private fun AddNewExerciseScreenContent(
 
     val sets = remember { mutableStateListOf<MutableState<String>>() }
 
-    Column {
+    Column(
+        verticalArrangement= Arrangement.SpaceBetween
+    ) {
 
         EmptyTopBar(stringResource(id = R.string.search_exercise))
 
-        SearchView(
-            text = textState,
-            active = active,
-            exercises = exercises,
-            selectedExercise = selectedExercise
-        )
+        Column(
+            modifier = Modifier.verticalScroll(rememberScrollState())
+                .height(500.dp)
 
-        Text(text = selectedExercise.value.title)
-        Text(text = selectedExercise.value.bodyPartWorked)
-        Text(text = selectedExercise.value.level)
-        Text(text = selectedExercise.value.type)
-        Text(text = selectedExercise.value.description)
-        Text(text = selectedExercise.value.equipment)
+        ) {
+            SearchView(
+                text = textState,
+                active = active,
+                exercises = exercises,
+                selectedExercise = selectedExercise
+            )
 
-        LazyColumn() {
-            items(sets) { item ->
-                TextField(
-                    value = item.value,
-                    modifier = Modifier.focusRequester(focusRequester),
-                    onValueChange = { item.value = it },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    singleLine = true,
-                )
-                if (sets[sets.size-1] == item) {
-                    LaunchedEffect(Unit) {
-                        focusRequester.requestFocus()
+            Text(text = selectedExercise.value.title)
+            Text(text = selectedExercise.value.bodyPartWorked)
+            Text(text = selectedExercise.value.level)
+            Text(text = selectedExercise.value.type)
+            Text(text = selectedExercise.value.description)
+            Text(text = selectedExercise.value.equipment)
+
+            LazyColumn() {
+                items(sets) { item ->
+                    TextField(
+                        value = item.value,
+                        modifier = Modifier.focusRequester(focusRequester),
+                        onValueChange = { item.value = it },
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        singleLine = true,
+                    )
+                    if (sets[sets.size-1] == item) {
+                        LaunchedEffect(Unit) {
+                            focusRequester.requestFocus()
+                        }
                     }
                 }
+                item {
+                    Button(onClick = {
+                    val reps = mutableStateOf("")
+                    sets.add(reps)
+                }
+                ) {
+                    Text(text = "+")
+                } }
             }
         }
-
-        Button(onClick = {
-            val reps = mutableStateOf("")
-            sets.add(reps)
-        }
-        ) {
-            Text(text = "+")
-        }
-
-
-        Spacer(modifier = Modifier.weight(1f))
 
         Row(
             modifier = Modifier
@@ -170,6 +177,7 @@ private fun AddNewExerciseScreenContent(
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically
         ) {
+
             Button(onClick = {
                 workoutViewModel.addExercise(selectedExercise.value)
                 // TODO REMOVE THIS CODE DUPLICATION, HOIST STATE
@@ -183,6 +191,7 @@ private fun AddNewExerciseScreenContent(
             }) {
                 Text(text = stringResource(id = R.string.new_exercise))
             }
+
             OutlinedButton(onClick = {
                 navController.navigate("${Screen.Workout.route}/${ticks}") {
                     popUpTo(navController.graph.findStartDestination().id) {

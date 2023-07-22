@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
@@ -97,13 +98,7 @@ private fun WorkoutScreenContent(
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Card(
-                modifier = Modifier
-                    .padding(0.dp, 10.dp)
-                    .size(100.dp)
-            ) {
-                Text(text = ticks.toString())
-            }
+            Timer(ticks)
         }
 
         LazyColumn(
@@ -175,4 +170,31 @@ fun WorkoutScreenPreview() {
         workoutViewModel = workoutViewModel,
         time = 0
     )
+}
+
+@Composable
+fun Timer(totalSeconds: Int) {
+    val hours = totalSeconds / 3600;
+    val minutes = (totalSeconds % 3600) / 60;
+    val seconds = totalSeconds % 60;
+    Card(
+        modifier = Modifier
+            .padding(0.dp, 10.dp)
+            .height(50.dp).width(300.dp)
+    ) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = "Duration: " + String.format("%02d:%02d:%02d", hours, minutes, seconds)
+            )
+        }
+    }
+}
+
+@Composable
+@Preview
+fun TimerPreview() {
+    Timer(totalSeconds = 3843)
 }
