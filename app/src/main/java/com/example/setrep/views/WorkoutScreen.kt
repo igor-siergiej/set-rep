@@ -16,17 +16,13 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
@@ -40,15 +36,11 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.rememberNavController
 import com.example.setrep.R
 import com.example.setrep.datasource.WorkoutViewModel
-import com.example.setrep.model.Exercise
 import com.example.setrep.navigation.Screen
 import com.example.setrep.ui.components.EmptyScaffold
 import com.example.setrep.ui.components.EmptyTopBar
-import com.example.setrep.ui.components.MainScaffold
-import com.example.setrep.ui.components.StartScreenScaffold
 import kotlinx.coroutines.delay
 import java.util.Date
-import kotlin.time.Duration.Companion.seconds
 
 @Composable
 fun WorkoutScreenTopLevel(
