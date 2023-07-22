@@ -115,13 +115,15 @@ private fun AddNewExerciseScreenContent(
     }
 
     val textState = remember { mutableStateOf("") }
-
-
-
     val selectedMovement = remember { mutableStateOf(Movement()) }
-
     val sets = remember { mutableStateListOf<MutableState<String>>() }
 
+    val addSetButtonActive = remember { mutableStateOf(true) }
+    val minusSetButtonActive = remember { mutableStateOf(true) }
+
+    minusSetButtonActive.value = sets.size > 0
+    addSetButtonActive.value = sets.size <= 12
+    
     Column(
         modifier = Modifier.fillMaxHeight()
     ) {
@@ -144,23 +146,36 @@ private fun AddNewExerciseScreenContent(
 
             ) {
                 items(sets) { item ->
+
+                    val addRepButtonActive = remember { mutableStateOf(true) }
+                    val minusRepButtonActive = remember { mutableStateOf(true) }
+
+                    if (item.value != "") {
+                        minusRepButtonActive.value = item.value.toInt() > 0
+                        addRepButtonActive.value = item.value.toInt() < 99
+                    }
+
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
                             .padding(5.dp, 0.dp)
                     ) {
-                        Button(onClick = {
-                            item.value = (item.value.toInt() + 1).toString()
-                        }
+                        Button(
+                            enabled = addRepButtonActive.value,
+                            onClick = {
+                                item.value = (item.value.toInt() + 1).toString()
+                            }
                         ) {
                             Text(text = "+")
                         }
 
                         RepSelector(item = item, index = sets.indexOf(item) + 1)
 
-                        Button(onClick = {
-                            item.value = (item.value.toInt() - 1).toString()
-                        }
+                        Button(
+                            enabled = minusRepButtonActive.value,
+                            onClick = {
+                                item.value = (item.value.toInt() - 1).toString()
+                            }
                         ) {
                             Text(text = "-")
                         }
@@ -169,18 +184,20 @@ private fun AddNewExerciseScreenContent(
                 item {
                     Column {
                         Button(
+                            enabled = addSetButtonActive.value,
                             onClick = {
-                            val reps = mutableStateOf("0")
-                            sets.add(reps)
-                        }
+                                val reps = mutableStateOf("0")
+                                sets.add(reps)
+                            }
                         ) {
                             Text(text = "+")
                         }
 
                         Button(
+                            enabled = minusSetButtonActive.value,
                             onClick = {
-                            sets.remove(sets[sets.size - 1])
-                        }
+                                sets.remove(sets[sets.size - 1])
+                            }
                         ) {
                             Text(text = "-")
                         }
@@ -194,8 +211,6 @@ private fun AddNewExerciseScreenContent(
         ExerciseDetails(
             movement = selectedMovement
         )
-
-
 
         Row(
             modifier = Modifier
