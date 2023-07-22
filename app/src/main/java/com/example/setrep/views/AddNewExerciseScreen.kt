@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -104,6 +105,7 @@ private fun AddNewExerciseScreenContent(
     time: Int
 ) {
     var ticks by remember { mutableStateOf(time) }
+
     LaunchedEffect(Unit) {
         while (true) {
             delay(1000 - Date().time % 1000)
@@ -112,7 +114,9 @@ private fun AddNewExerciseScreenContent(
     }
 
     val textState = remember { mutableStateOf("") }
+
     val active = remember { mutableStateOf(false) }
+
     val selectedExercise = remember { mutableStateOf(Exercise()) }
 
     val focusRequester = remember { FocusRequester() }
@@ -120,14 +124,15 @@ private fun AddNewExerciseScreenContent(
     val sets = remember { mutableStateListOf<MutableState<String>>() }
 
     Column(
-        verticalArrangement= Arrangement.SpaceBetween
+        modifier = Modifier.fillMaxHeight()
     ) {
-
         EmptyTopBar(stringResource(id = R.string.search_exercise))
 
         Column(
-            modifier = Modifier.verticalScroll(rememberScrollState())
-                .height(500.dp)
+            modifier = Modifier
+                .verticalScroll(rememberScrollState())
+                .height(700.dp)
+                .padding(8.dp)
 
         ) {
             SearchView(
@@ -137,12 +142,11 @@ private fun AddNewExerciseScreenContent(
                 selectedExercise = selectedExercise
             )
 
-            Text(text = selectedExercise.value.title)
-            Text(text = selectedExercise.value.bodyPartWorked)
-            Text(text = selectedExercise.value.level)
-            Text(text = selectedExercise.value.type)
-            Text(text = selectedExercise.value.description)
-            Text(text = selectedExercise.value.equipment)
+            Text(text = "Body Part Worked: " + selectedExercise.value.bodyPartWorked)
+            Text(text = "Difficulty Level: " + selectedExercise.value.level)
+            Text(text = "Exercise Type: " + selectedExercise.value.type)
+            Text(text = "Exercise Description: " + selectedExercise.value.description)
+            Text(text = "Equipment Needed: " + selectedExercise.value.equipment)
 
             LazyColumn() {
                 items(sets) { item ->
@@ -153,22 +157,27 @@ private fun AddNewExerciseScreenContent(
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         singleLine = true,
                     )
-                    if (sets[sets.size-1] == item) {
+
+                    if (sets[sets.size - 1] == item) {
                         LaunchedEffect(Unit) {
                             focusRequester.requestFocus()
                         }
                     }
                 }
+
                 item {
                     Button(onClick = {
-                    val reps = mutableStateOf("")
-                    sets.add(reps)
+                        val reps = mutableStateOf("")
+                        sets.add(reps)
+                    }
+                    ) {
+                        Text(text = "+")
+                    }
                 }
-                ) {
-                    Text(text = "+")
-                } }
             }
         }
+
+        Spacer(modifier = Modifier.weight(1f))
 
         Row(
             modifier = Modifier
@@ -177,30 +186,31 @@ private fun AddNewExerciseScreenContent(
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically
         ) {
-
-            Button(onClick = {
-                workoutViewModel.addExercise(selectedExercise.value)
-                // TODO REMOVE THIS CODE DUPLICATION, HOIST STATE
-                navController.navigate("${Screen.Workout.route}/${ticks}") {
-                    popUpTo(navController.graph.findStartDestination().id) {
-                        saveState = true
+            Button(
+                onClick = {
+                    workoutViewModel.addExercise(selectedExercise.value)
+                    // TODO REMOVE THIS CODE DUPLICATION, HOIST STATE
+                    navController.navigate("${Screen.Workout.route}/${ticks}") {
+                        popUpTo(navController.graph.findStartDestination().id) {
+                            saveState = true
+                        }
+                        launchSingleTop = true
+                        restoreState = true
                     }
-                    launchSingleTop = true
-                    restoreState = true
-                }
-            }) {
+                }) {
                 Text(text = stringResource(id = R.string.new_exercise))
             }
 
-            OutlinedButton(onClick = {
-                navController.navigate("${Screen.Workout.route}/${ticks}") {
-                    popUpTo(navController.graph.findStartDestination().id) {
-                        saveState = true
+            OutlinedButton(
+                onClick = {
+                    navController.navigate("${Screen.Workout.route}/${ticks}") {
+                        popUpTo(navController.graph.findStartDestination().id) {
+                            saveState = true
+                        }
+                        launchSingleTop = true
+                        restoreState = true
                     }
-                    launchSingleTop = true
-                    restoreState = true
-                }
-            }) {
+                }) {
                 Text(text = stringResource(id = R.string.go_back))
             }
         }

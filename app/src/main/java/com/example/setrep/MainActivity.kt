@@ -69,9 +69,6 @@ private fun BuildNavigationGraph(
     LaunchedEffect(key1 = Unit) {
         coroutineScope.launch {
             exercises = readCsv(inputStream)
-            /*for (exercise: Exercise in exercises) {
-                Log.d("exercises", exercise.toString())
-            }*/
         }
     }
 
@@ -152,7 +149,7 @@ fun readCsv(inputStream: InputStream): List<Exercise> {
         .filter { it.isNotBlank() }
         .map {
             val (title, description, type, bodyPartWorked, equipment, level) = it.split(
-                ',',
+                ']',
                 ignoreCase = false,
                 limit = 6
             )
