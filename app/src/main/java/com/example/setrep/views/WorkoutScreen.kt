@@ -115,10 +115,16 @@ private fun WorkoutScreenContent(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
                     ) {
-                        Text(
-                            text = it.title,
-                            textAlign = TextAlign.Center
-                        )
+                        Column {
+                            Text(
+                                text = it.movement.title,
+                                textAlign = TextAlign.Center
+                            )
+                            Text(
+                                text = "Number of Sets: " + it.sets.size.toString(),
+                                textAlign = TextAlign.Center
+                            )
+                        }
                     }
                 }
             }

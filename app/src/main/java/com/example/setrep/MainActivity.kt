@@ -19,7 +19,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.setrep.datasource.ProfileViewModel
 import com.example.setrep.datasource.WorkoutViewModel
-import com.example.setrep.model.Exercise
+import com.example.setrep.model.Movement
 import com.example.setrep.navigation.Screen
 import com.example.setrep.ui.theme.SetRepTheme
 import com.example.setrep.views.AddNewExerciseScreenTopLevel
@@ -64,11 +64,11 @@ private fun BuildNavigationGraph(
 
     val context = LocalContext.current
     val inputStream: InputStream = context.assets.open("exercisesDataSet.csv")
-    var exercises: List<Exercise> = emptyList()
+    var movements: List<Movement> = emptyList()
 
     LaunchedEffect(key1 = Unit) {
         coroutineScope.launch {
-            exercises = readCsv(inputStream)
+            movements = readCsv(inputStream)
         }
     }
 
@@ -117,7 +117,7 @@ private fun BuildNavigationGraph(
         ) { backStackEntry ->
             AddNewExerciseScreenTopLevel(
                 navController = navController,
-                exercises = exercises,
+                movements = movements,
                 workoutViewModel = workoutViewModel,
                 time = backStackEntry.arguments?.getInt("time")!!
             )
@@ -142,7 +142,7 @@ private fun BuildNavigationGraph(
 }
 
 
-fun readCsv(inputStream: InputStream): List<Exercise> {
+fun readCsv(inputStream: InputStream): List<Movement> {
     val reader = inputStream.bufferedReader()
     val header = reader.readLine()
     return reader.lineSequence()
@@ -153,7 +153,7 @@ fun readCsv(inputStream: InputStream): List<Exercise> {
                 ignoreCase = false,
                 limit = 6
             )
-            Exercise(title, description, type, bodyPartWorked, equipment, level)
+            Movement(title, description, type, bodyPartWorked, equipment, level)
         }.toList()
 }
 

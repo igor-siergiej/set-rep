@@ -12,11 +12,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
@@ -24,6 +24,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Surface
@@ -31,20 +32,19 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -55,6 +55,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.setrep.R
 import com.example.setrep.datasource.WorkoutViewModel
 import com.example.setrep.model.Exercise
+import com.example.setrep.model.Movement
 import com.example.setrep.navigation.Screen
 import com.example.setrep.ui.components.EmptyScaffold
 import com.example.setrep.ui.components.EmptyTopBar
@@ -64,13 +65,13 @@ import java.util.Date
 @Composable
 fun AddNewExerciseScreenTopLevel(
     navController: NavController,
-    exercises: List<Exercise>,
+    movements: List<Movement>,
     workoutViewModel: WorkoutViewModel,
     time: Int
 ) {
     AddNewExerciseScreen(
         navController = navController,
-        exercises = exercises,
+        movements = movements,
         workoutViewModel = workoutViewModel,
         time = time
     )
@@ -79,7 +80,7 @@ fun AddNewExerciseScreenTopLevel(
 @Composable
 fun AddNewExerciseScreen(
     navController: NavController,
-    exercises: List<Exercise>,
+    movements: List<Movement>,
     workoutViewModel: WorkoutViewModel,
     time: Int
 ) {
@@ -88,7 +89,7 @@ fun AddNewExerciseScreen(
             modifier = Modifier.fillMaxSize()
         ) {
             AddNewExerciseScreenContent(
-                exercises = exercises,
+                movements = movements,
                 navController = navController,
                 workoutViewModel = workoutViewModel,
                 time = time
@@ -99,7 +100,7 @@ fun AddNewExerciseScreen(
 
 @Composable
 private fun AddNewExerciseScreenContent(
-    exercises: List<Exercise>,
+    movements: List<Movement>,
     navController: NavController,
     workoutViewModel: WorkoutViewModel,
     time: Int
@@ -115,11 +116,9 @@ private fun AddNewExerciseScreenContent(
 
     val textState = remember { mutableStateOf("") }
 
-    val active = remember { mutableStateOf(false) }
 
-    val selectedExercise = remember { mutableStateOf(Exercise()) }
 
-    val focusRequester = remember { FocusRequester() }
+    val selectedMovement = remember { mutableStateOf(Movement()) }
 
     val sets = remember { mutableStateListOf<MutableState<String>>() }
 
@@ -129,55 +128,74 @@ private fun AddNewExerciseScreenContent(
         EmptyTopBar(stringResource(id = R.string.search_exercise))
 
         Column(
-            modifier = Modifier
-                .verticalScroll(rememberScrollState())
-                .height(700.dp)
-                .padding(8.dp)
-
         ) {
             SearchView(
                 text = textState,
-                active = active,
-                exercises = exercises,
-                selectedExercise = selectedExercise
+                movements = movements,
+                selectedMovement = selectedMovement
             )
 
-            Text(text = "Body Part Worked: " + selectedExercise.value.bodyPartWorked)
-            Text(text = "Difficulty Level: " + selectedExercise.value.level)
-            Text(text = "Exercise Type: " + selectedExercise.value.type)
-            Text(text = "Exercise Description: " + selectedExercise.value.description)
-            Text(text = "Equipment Needed: " + selectedExercise.value.equipment)
+            LazyRow(
+                modifier = Modifier
+                    .padding(8.dp)
+                    .height(200.dp),
+                horizontalArrangement = Arrangement.Start,
+                verticalAlignment = Alignment.CenterVertically
 
-            LazyColumn() {
+            ) {
                 items(sets) { item ->
-                    TextField(
-                        value = item.value,
-                        modifier = Modifier.focusRequester(focusRequester),
-                        onValueChange = { item.value = it },
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        singleLine = true,
-                    )
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(5.dp, 0.dp)
+                    ) {
+                        Button(onClick = {
+                            item.value = (item.value.toInt() + 1).toString()
+                        }
+                        ) {
+                            Text(text = "+")
+                        }
 
-                    if (sets[sets.size - 1] == item) {
-                        LaunchedEffect(Unit) {
-                            focusRequester.requestFocus()
+                        RepSelector(item = item, index = sets.indexOf(item) + 1)
+
+                        Button(onClick = {
+                            item.value = (item.value.toInt() - 1).toString()
+                        }
+                        ) {
+                            Text(text = "-")
                         }
                     }
                 }
-
                 item {
-                    Button(onClick = {
-                        val reps = mutableStateOf("")
-                        sets.add(reps)
-                    }
-                    ) {
-                        Text(text = "+")
+                    Column {
+                        Button(
+                            onClick = {
+                            val reps = mutableStateOf("0")
+                            sets.add(reps)
+                        }
+                        ) {
+                            Text(text = "+")
+                        }
+
+                        Button(
+                            onClick = {
+                            sets.remove(sets[sets.size - 1])
+                        }
+                        ) {
+                            Text(text = "-")
+                        }
                     }
                 }
             }
         }
 
         Spacer(modifier = Modifier.weight(1f))
+
+        ExerciseDetails(
+            movement = selectedMovement
+        )
+
+
 
         Row(
             modifier = Modifier
@@ -188,7 +206,13 @@ private fun AddNewExerciseScreenContent(
         ) {
             Button(
                 onClick = {
-                    workoutViewModel.addExercise(selectedExercise.value)
+                    val setsIntArray = ArrayList<Int>()
+                    for (stringSet in sets) {
+                        setsIntArray.add(stringSet.value.toInt())
+                    }
+                    workoutViewModel.addExercise(
+                        Exercise(selectedMovement.value, setsIntArray)
+                    )
                     // TODO REMOVE THIS CODE DUPLICATION, HOIST STATE
                     navController.navigate("${Screen.Workout.route}/${ticks}") {
                         popUpTo(navController.graph.findStartDestination().id) {
@@ -221,11 +245,10 @@ private fun AddNewExerciseScreenContent(
 @Composable
 fun SearchView(
     text: MutableState<String>,
-    active: MutableState<Boolean>,
-    exercises: List<Exercise>,
-    selectedExercise: MutableState<Exercise>
+    movements: List<Movement>,
+    selectedMovement: MutableState<Movement>
 ) {
-
+    val active = remember { mutableStateOf(false) }
     SearchBar(
         query = text.value,
         onQueryChange = { value ->
@@ -276,9 +299,9 @@ fun SearchView(
         }
     ) {
         ExerciseList(
-            exerciseList = exercises,
+            movementList = movements,
             text = text,
-            selectedExercise = selectedExercise,
+            selectedMovement = selectedMovement,
             isSearchActive = active
         )
     }
@@ -288,41 +311,40 @@ fun SearchView(
 @Composable
 fun SearchViewPreview() {
     val textState = remember { mutableStateOf("test") }
-    val exercise = remember { mutableStateOf(Exercise()) }
-    val active = remember { mutableStateOf(false) }
-    val exercises = emptyList<Exercise>()
-    SearchView(textState, active, exercises, exercise)
+    val movement = remember { mutableStateOf(Movement()) }
+    val movements = emptyList<Movement>()
+    SearchView(textState, movements, movement)
 }
 
 @Composable
-fun ExerciseItem(exercise: Exercise, onItemClick: (Exercise) -> Unit) {
+fun ExerciseItem(movement: Movement, onItemClick: (Movement) -> Unit) {
     Row(
         modifier = Modifier
-            .clickable(onClick = { onItemClick(exercise) })
+            .clickable(onClick = { onItemClick(movement) })
             .height(57.dp)
             .fillMaxWidth()
             .padding(PaddingValues(8.dp, 16.dp))
     ) {
-        Text(text = exercise.title, fontSize = 18.sp)
+        Text(text = movement.title, fontSize = 18.sp)
     }
 }
 
 @Composable
 private fun ExerciseList(
-    exerciseList: List<Exercise>,
+    movementList: List<Movement>,
     text: MutableState<String>,
-    selectedExercise: MutableState<Exercise>,
+    selectedMovement: MutableState<Movement>,
     isSearchActive: MutableState<Boolean>
 ) {
-    var filteredCountries: ArrayList<Exercise>
+    var filteredCountries: ArrayList<Movement>
 
     LazyColumn(modifier = Modifier.fillMaxWidth()) {
         val searchedText = text.value
 
         filteredCountries = if (searchedText.isEmpty()) (ArrayList()) else {
 
-            val resultList = ArrayList<Exercise>()
-            for (exercise in exerciseList) {
+            val resultList = ArrayList<Movement>()
+            for (exercise in movementList) {
                 if (exercise.title.contains(searchedText)) {
                     resultList.add(exercise)
                 }
@@ -332,9 +354,9 @@ private fun ExerciseList(
 
         items(filteredCountries) { filteredExercise ->
             ExerciseItem(
-                exercise = filteredExercise,
+                movement = filteredExercise,
                 onItemClick = { exercise ->
-                    selectedExercise.value = exercise
+                    selectedMovement.value = exercise
                     text.value = exercise.title
                     isSearchActive.value = false
                 }
@@ -350,7 +372,7 @@ fun AddNewExerciseScreenPreview() {
     val workoutViewModel: WorkoutViewModel = viewModel()
     AddNewExerciseScreen(
         navController = navController,
-        exercises = ArrayList(),
+        movements = ArrayList(),
         workoutViewModel,
         0
     )
@@ -360,5 +382,69 @@ fun AddNewExerciseScreenPreview() {
 @Preview
 @Composable
 private fun ExerciseItemPreview() {
-    ExerciseItem(Exercise("test", "test", "test", "test", "test", "test")) {}
+    ExerciseItem(Movement("test", "test", "test", "test", "test", "test")) {}
+}
+
+@Composable
+fun ExerciseDetail(lable: String, description: String) {
+    Row(
+        modifier = Modifier.padding(2.dp)
+    ) {
+        Text(
+            text = lable,
+            modifier = Modifier.weight(0.35f),
+            style = MaterialTheme.typography.labelLarge
+        )
+        Text(
+            text = description,
+            modifier = Modifier.weight(0.65f)
+        )
+    }
+}
+
+@Composable
+fun ExerciseDetails(movement: MutableState<Movement>) {
+    Column(
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        ExerciseDetail(lable = "Body Part Worked", description = movement.value.bodyPartWorked)
+        ExerciseDetail(lable = "Difficulty Level", description = movement.value.level)
+        ExerciseDetail(lable = "Exercise Type", description = movement.value.type)
+        ExerciseDetail(lable = "Exercise Description", description = movement.value.description)
+        ExerciseDetail(lable = "Equipment Needed", description = movement.value.equipment)
+    }
+}
+
+@Preview
+@Composable
+fun ExerciseDetailsPreview() {
+    val movement =
+        remember { mutableStateOf(Movement("test", "test", "test", "test", "test", "test")) }
+    ExerciseDetails(movement = movement)
+}
+
+@Composable
+fun RepSelector(item: MutableState<String>, index: Int) {
+    val focusRequester = remember { FocusRequester() }
+
+    Text(text = "Set $index")
+
+    TextField(
+        value = item.value,
+        modifier = Modifier
+            .focusRequester(focusRequester)
+            .width(60.dp),
+        onValueChange = {
+            if (it.length <= 2) item.value = it
+        },
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+        singleLine = true,
+        supportingText = {
+            Text(
+                text = "${item.value.length} / 2",
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.End,
+            )
+        },
+    )
 }
