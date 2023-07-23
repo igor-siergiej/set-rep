@@ -10,8 +10,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
@@ -38,8 +36,9 @@ import androidx.navigation.compose.rememberNavController
 import com.example.setrep.R
 import com.example.setrep.datasource.WorkoutViewModel
 import com.example.setrep.navigation.Screen
-import com.example.setrep.ui.components.EmptyScaffold
-import com.example.setrep.ui.components.EmptyTopBar
+import com.example.setrep.ui.components.scaffold.EmptyScaffold
+import com.example.setrep.ui.components.timer.Timer
+import com.example.setrep.ui.components.topbar.EmptyTopBar
 import kotlinx.coroutines.delay
 import java.util.Date
 
@@ -79,7 +78,6 @@ private fun WorkoutScreenContent(
     workoutViewModel: WorkoutViewModel,
     time: Int
 ) {
-
     var ticks by remember { mutableStateOf(time) }
     LaunchedEffect(Unit) {
         while (true) {
@@ -176,31 +174,4 @@ fun WorkoutScreenPreview() {
         workoutViewModel = workoutViewModel,
         time = 0
     )
-}
-
-@Composable
-fun Timer(totalSeconds: Int) {
-    val hours = totalSeconds / 3600;
-    val minutes = (totalSeconds % 3600) / 60;
-    val seconds = totalSeconds % 60;
-    Card(
-        modifier = Modifier
-            .padding(0.dp, 10.dp)
-            .height(50.dp).width(300.dp)
-    ) {
-        Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = "Duration: " + String.format("%02d:%02d:%02d", hours, minutes, seconds)
-            )
-        }
-    }
-}
-
-@Composable
-@Preview
-fun TimerPreview() {
-    Timer(totalSeconds = 3843)
 }

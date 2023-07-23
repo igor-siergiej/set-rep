@@ -57,8 +57,10 @@ import com.example.setrep.datasource.WorkoutViewModel
 import com.example.setrep.model.Exercise
 import com.example.setrep.model.Movement
 import com.example.setrep.navigation.Screen
-import com.example.setrep.ui.components.EmptyScaffold
-import com.example.setrep.ui.components.EmptyTopBar
+import com.example.setrep.ui.components.scaffold.EmptyScaffold
+import com.example.setrep.ui.components.searchbar.MovementItem
+import com.example.setrep.ui.components.searchbar.SearchTextField
+import com.example.setrep.ui.components.topbar.EmptyTopBar
 import kotlinx.coroutines.delay
 import java.util.Date
 
@@ -122,7 +124,7 @@ private fun AddNewExerciseScreenContent(
     val minusSetButtonActive = remember { mutableStateOf(true) }
 
     minusSetButtonActive.value = sets.size > 0
-    addSetButtonActive.value = sets.size <= 12
+    addSetButtonActive.value = sets.size < 12
     
     Column(
         modifier = Modifier.fillMaxHeight()
@@ -131,7 +133,7 @@ private fun AddNewExerciseScreenContent(
 
         Column(
         ) {
-            SearchView(
+            SearchTextField(
                 text = textState,
                 movements = movements,
                 selectedMovement = selectedMovement
@@ -256,129 +258,13 @@ private fun AddNewExerciseScreenContent(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun SearchView(
-    text: MutableState<String>,
-    movements: List<Movement>,
-    selectedMovement: MutableState<Movement>
-) {
-    val active = remember { mutableStateOf(false) }
-    SearchBar(
-        query = text.value,
-        onQueryChange = { value ->
-            text.value = value
-        },
-        onSearch = {
-            active.value = false
-        },
-        active = active.value,
-        onActiveChange = {
-            active.value = it
-        },
-        modifier = Modifier
-            .fillMaxWidth(),
-        leadingIcon = {
-            Icon(
-                Icons.Default.Search,
-                contentDescription = "Search",
-                modifier = Modifier
-                    .padding(15.dp)
-                    .size(24.dp)
-            )
-        },
-        placeholder = {
-            Text(text = "Search Exercise")
-        },
-        trailingIcon = {
-            if (active.value) {
-                IconButton(
-                    onClick = {
-                        if (text.value.isNotEmpty()) {
-                            text.value = ""
-                        } else {
-                            active.value = false
-                        }
-                    }
-                ) {
-                    Icon(
-                        Icons.Default.Close,
-                        contentDescription = "Close",
-                        modifier = Modifier
-                            .padding(15.dp)
-                            .size(24.dp)
 
-                    )
-                }
-            }
-        }
-    ) {
-        ExerciseList(
-            movementList = movements,
-            text = text,
-            selectedMovement = selectedMovement,
-            isSearchActive = active
-        )
-    }
-}
 
-@Preview(showBackground = true)
-@Composable
-fun SearchViewPreview() {
-    val textState = remember { mutableStateOf("test") }
-    val movement = remember { mutableStateOf(Movement()) }
-    val movements = emptyList<Movement>()
-    SearchView(textState, movements, movement)
-}
 
-@Composable
-fun ExerciseItem(movement: Movement, onItemClick: (Movement) -> Unit) {
-    Row(
-        modifier = Modifier
-            .clickable(onClick = { onItemClick(movement) })
-            .height(57.dp)
-            .fillMaxWidth()
-            .padding(PaddingValues(8.dp, 16.dp))
-    ) {
-        Text(text = movement.title, fontSize = 18.sp)
-    }
-}
 
-@Composable
-private fun ExerciseList(
-    movementList: List<Movement>,
-    text: MutableState<String>,
-    selectedMovement: MutableState<Movement>,
-    isSearchActive: MutableState<Boolean>
-) {
-    var filteredCountries: ArrayList<Movement>
 
-    LazyColumn(modifier = Modifier.fillMaxWidth()) {
-        val searchedText = text.value
 
-        filteredCountries = if (searchedText.isEmpty()) (ArrayList()) else {
 
-            val resultList = ArrayList<Movement>()
-            for (exercise in movementList) {
-                if (exercise.title.contains(searchedText)) {
-                    resultList.add(exercise)
-                }
-            }
-            resultList
-        }
-
-        items(filteredCountries) { filteredExercise ->
-            ExerciseItem(
-                movement = filteredExercise,
-                onItemClick = { exercise ->
-                    selectedMovement.value = exercise
-                    text.value = exercise.title
-                    isSearchActive.value = false
-                }
-            )
-        }
-    }
-}
 
 @Preview
 @Composable
@@ -397,7 +283,7 @@ fun AddNewExerciseScreenPreview() {
 @Preview
 @Composable
 private fun ExerciseItemPreview() {
-    ExerciseItem(Movement("test", "test", "test", "test", "test", "test")) {}
+    MovementItem(Movement("test", "test", "test", "test", "test", "test")) {}
 }
 
 @Composable

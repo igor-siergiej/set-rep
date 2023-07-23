@@ -1,4 +1,4 @@
-package com.example.setrep.ui.components
+package com.example.setrep.ui.components.navbar
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AreaChart
@@ -12,21 +12,22 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import com.example.setrep.R
 import com.example.setrep.navigation.Screen
 import com.example.setrep.navigation.screens
+import com.example.setrep.ui.components.IconGroup
 
 @Composable
 fun NavigationBar(
     navController: NavController
 ) {
-    val context = LocalContext.current
     val icons = mapOf(
         Screen.Home to IconGroup(
             filledIcon = Icons.Filled.Home,
@@ -79,4 +80,11 @@ fun NavigationBar(
             )
         }
     }
+}
+
+@Preview
+@Composable
+fun NavigationBarPreview() {
+    val navController = rememberNavController()
+    NavigationBar(navController)
 }

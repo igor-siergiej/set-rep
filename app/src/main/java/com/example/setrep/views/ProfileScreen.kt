@@ -8,8 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import com.example.setrep.datasource.ProfileViewModel
-import com.example.setrep.ui.components.MainScaffold
-import com.example.setrep.ui.components.StartScreenScaffold
+import com.example.setrep.ui.components.scaffold.MainScaffold
 
 @Composable
 fun ProfileScreenTopLevel(

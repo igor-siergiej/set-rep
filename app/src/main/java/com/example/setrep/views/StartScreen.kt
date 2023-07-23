@@ -19,7 +19,7 @@ import androidx.navigation.NavController
 import com.example.setrep.R
 import com.example.setrep.datasource.ProfileViewModel
 import com.example.setrep.navigation.Screen
-import com.example.setrep.ui.components.StartScreenScaffold
+import com.example.setrep.ui.components.scaffold.StartScreenScaffold
 
 @Composable
 fun StartScreenTopLevel(
@@ -52,7 +52,6 @@ fun StartScreen(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun StartScreenContent(
     modifier: Modifier = Modifier,
