@@ -16,27 +16,39 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun RepTextField(item: MutableState<String>, index: Int) {
+fun NumberTextField(textFieldValue: MutableState<String>, numOfDigits: Int) {
     val focusRequester = remember { FocusRequester() }
 
-    Text(text = "Set $index")
-
     TextField(
-        value = item.value,
+        value = textFieldValue.value,
         modifier = Modifier
             .focusRequester(focusRequester)
-            .width(60.dp),
+            .width(65.dp),
         onValueChange = {
-            if (it.length <= 2) item.value = it
+            if (it.length <= numOfDigits) textFieldValue.value = it
         },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
         singleLine = true,
         supportingText = {
             Text(
-                text = "${item.value.length} / 2",
+                text = "${textFieldValue.value.length} / $numOfDigits",
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.End,
             )
         },
     )
+}
+
+
+@Composable
+fun RepTextField(textFieldValue: MutableState<String>, index: Int) {
+    Text(text = "Set $index")
+    Text(text = "Reps:")
+    NumberTextField(textFieldValue = textFieldValue, numOfDigits = 2)
+}
+
+@Composable
+fun WeightTextField(textFieldValue: MutableState<String>,) {
+    Text(text = "Weight(kg):")
+    NumberTextField(textFieldValue = textFieldValue, numOfDigits = 3)
 }

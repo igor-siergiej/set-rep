@@ -39,6 +39,7 @@ import com.example.setrep.ui.components.movementdetails.MovementDetails
 import com.example.setrep.ui.components.scaffold.EmptyScaffold
 import com.example.setrep.ui.components.searchbar.SearchTextField
 import com.example.setrep.ui.components.textfield.RepTextField
+import com.example.setrep.ui.components.textfield.WeightTextField
 import com.example.setrep.ui.components.topbar.EmptyTopBar
 import kotlinx.coroutines.delay
 import java.util.Date
@@ -98,6 +99,7 @@ private fun AddNewExerciseScreenContent(
     val textState = remember { mutableStateOf("") }
     val selectedMovement = remember { mutableStateOf(Movement()) }
     val sets = remember { mutableStateListOf<MutableState<String>>() }
+    val weights = remember { mutableStateListOf<MutableState<String>>() }
 
     val addSetButtonActive = remember { mutableStateOf(true) }
     val minusSetButtonActive = remember { mutableStateOf(true) }
@@ -121,13 +123,12 @@ private fun AddNewExerciseScreenContent(
             LazyRow(
                 modifier = Modifier
                     .padding(8.dp)
-                    .height(200.dp),
+                    .height(300.dp),
                 horizontalArrangement = Arrangement.Start,
                 verticalAlignment = Alignment.CenterVertically
 
             ) {
                 items(sets) { item ->
-
                     val addRepButtonActive = remember { mutableStateOf(true) }
                     val minusRepButtonActive = remember { mutableStateOf(true) }
 
@@ -150,7 +151,7 @@ private fun AddNewExerciseScreenContent(
                             Text(text = "+")
                         }
 
-                        RepTextField(item = item, index = sets.indexOf(item) + 1)
+                        RepTextField(textFieldValue = item, index = sets.indexOf(item) + 1)
 
                         Button(
                             enabled = minusRepButtonActive.value,
@@ -160,6 +161,8 @@ private fun AddNewExerciseScreenContent(
                         ) {
                             Text(text = "-")
                         }
+
+                        WeightTextField(textFieldValue = weights[sets.indexOf(item)])
                     }
                 }
                 item {
@@ -168,7 +171,9 @@ private fun AddNewExerciseScreenContent(
                             enabled = addSetButtonActive.value,
                             onClick = {
                                 val reps = mutableStateOf("0")
+                                val weight = mutableStateOf("20")
                                 sets.add(reps)
+                                weights.add(weight)
                             }
                         ) {
                             Text(text = "+")
@@ -178,6 +183,7 @@ private fun AddNewExerciseScreenContent(
                             enabled = minusSetButtonActive.value,
                             onClick = {
                                 sets.remove(sets[sets.size - 1])
+                                weights.remove(weights[weights.size - 1])
                             }
                         ) {
                             Text(text = "-")
@@ -200,14 +206,18 @@ private fun AddNewExerciseScreenContent(
                 for (stringSet in sets) {
                     setsIntArray.add(stringSet.value.toInt())
                 }
+                val weightsIntArray = ArrayList<Int>()
+                for (stringWeight in weights) {
+                    weightsIntArray.add(stringWeight.value.toInt())
+                }
                 workoutViewModel.addExercise(
-                    Exercise(selectedMovement.value, setsIntArray)
+                    Exercise(selectedMovement.value, setsIntArray, weightsIntArray)
                 )
-                navigateToScreenWithParam(navController,Screen.Workout,ticks)
+                navigateToScreenWithParam(navController, Screen.Workout, ticks)
             },
             rightText = stringResource(id = R.string.go_back),
             rightOnClick = {
-                navigateToScreenWithParam(navController,Screen.Workout,ticks)
+                navigateToScreenWithParam(navController, Screen.Workout, ticks)
             }
         )
     }
