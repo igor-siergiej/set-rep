@@ -21,7 +21,7 @@ fun MovementDetails(movement: MutableState<Movement>) {
         MovementDetail(label = "Difficulty Level", description = movement.value.level,sizeOfLine)
         MovementDetail(label = "Exercise Type", description = movement.value.type,sizeOfLine)
         MovementDetail(label = "Equipment Needed", description = movement.value.equipment,sizeOfLine)
-        MovementDetail(label = "Exercise Description", description = movement.value.description,200.dp)
+        MovementDetail(label = "Exercise Description", description = movement.value.description,150.dp)
     }
 }
 

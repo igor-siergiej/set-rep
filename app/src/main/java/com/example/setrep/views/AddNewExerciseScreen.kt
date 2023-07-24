@@ -9,9 +9,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Button
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -35,6 +33,8 @@ import com.example.setrep.model.Exercise
 import com.example.setrep.model.Movement
 import com.example.setrep.navigation.Screen
 import com.example.setrep.ui.components.button.ButtonRow
+import com.example.setrep.ui.components.button.MinusCircleButton
+import com.example.setrep.ui.components.button.PlusCircleButton
 import com.example.setrep.ui.components.movementdetails.MovementDetails
 import com.example.setrep.ui.components.scaffold.EmptyScaffold
 import com.example.setrep.ui.components.searchbar.SearchTextField
@@ -96,6 +96,8 @@ private fun AddNewExerciseScreenContent(
         }
     }
 
+    val hasExerciseBeenSelected = remember { mutableStateOf(false) }
+
     val textState = remember { mutableStateOf("") }
     val selectedMovement = remember { mutableStateOf(Movement()) }
     val sets = remember { mutableStateListOf<MutableState<String>>() }
@@ -105,7 +107,7 @@ private fun AddNewExerciseScreenContent(
     val minusSetButtonActive = remember { mutableStateOf(true) }
 
     minusSetButtonActive.value = sets.size > 0
-    addSetButtonActive.value = sets.size < 12
+    addSetButtonActive.value = ((sets.size < 12) && hasExerciseBeenSelected.value)
 
     Column(
         modifier = Modifier.fillMaxHeight()
@@ -117,13 +119,14 @@ private fun AddNewExerciseScreenContent(
             SearchTextField(
                 text = textState,
                 movements = movements,
-                selectedMovement = selectedMovement
+                selectedMovement = selectedMovement,
+                hasItemBeenSelected = hasExerciseBeenSelected
             )
 
             LazyRow(
                 modifier = Modifier
                     .padding(8.dp)
-                    .height(300.dp),
+                    .height(310.dp),
                 horizontalArrangement = Arrangement.Start,
                 verticalAlignment = Alignment.CenterVertically
 
@@ -142,52 +145,46 @@ private fun AddNewExerciseScreenContent(
                             .fillMaxSize()
                             .padding(5.dp, 0.dp)
                     ) {
-                        Button(
-                            enabled = addRepButtonActive.value,
+
+                        PlusCircleButton(
+                            active = addRepButtonActive.value,
                             onClick = {
                                 item.value = (item.value.toInt() + 1).toString()
                             }
-                        ) {
-                            Text(text = "+")
-                        }
+                        )
 
                         RepTextField(textFieldValue = item, index = sets.indexOf(item) + 1)
 
-                        Button(
-                            enabled = minusRepButtonActive.value,
+                        MinusCircleButton(
+                            active = minusRepButtonActive.value,
                             onClick = {
                                 item.value = (item.value.toInt() - 1).toString()
                             }
-                        ) {
-                            Text(text = "-")
-                        }
+                        )
 
                         WeightTextField(textFieldValue = weights[sets.indexOf(item)])
                     }
                 }
                 item {
                     Column {
-                        Button(
-                            enabled = addSetButtonActive.value,
+
+                        PlusCircleButton(
+                            active = addSetButtonActive.value,
                             onClick = {
                                 val reps = mutableStateOf("0")
                                 val weight = mutableStateOf("20")
                                 sets.add(reps)
                                 weights.add(weight)
                             }
-                        ) {
-                            Text(text = "+")
-                        }
+                        )
 
-                        Button(
-                            enabled = minusSetButtonActive.value,
+                        MinusCircleButton(
+                            active = minusSetButtonActive.value,
                             onClick = {
                                 sets.remove(sets[sets.size - 1])
                                 weights.remove(weights[weights.size - 1])
                             }
-                        ) {
-                            Text(text = "-")
-                        }
+                        )
                     }
                 }
             }

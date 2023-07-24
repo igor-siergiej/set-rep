@@ -28,12 +28,14 @@ fun ButtonRow(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Button(
-            onClick = leftOnClick
+            onClick = leftOnClick,
+            modifier = Modifier.padding(10.dp,0.dp).weight(0.5f)
         ) {
             Text(text = leftText)
         }
         OutlinedButton(
-            onClick = rightOnClick
+            onClick = rightOnClick,
+            modifier = Modifier.padding(10.dp,0.dp).weight(0.5f)
         ) {
             Text(text = rightText)
         }

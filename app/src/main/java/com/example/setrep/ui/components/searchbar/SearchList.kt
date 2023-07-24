@@ -13,7 +13,8 @@ fun SearchList(
     movementList: List<Movement>,
     text: MutableState<String>,
     selectedMovement: MutableState<Movement>,
-    isSearchActive: MutableState<Boolean>
+    isSearchActive: MutableState<Boolean>,
+    hasItemBeenClicked: MutableState<Boolean>
 ) {
     var filteredCountries: ArrayList<Movement>
 
@@ -38,6 +39,7 @@ fun SearchList(
                     selectedMovement.value = exercise
                     text.value = exercise.title
                     isSearchActive.value = false
+                    hasItemBeenClicked.value = true
                 }
             )
         }

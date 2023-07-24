@@ -21,7 +21,7 @@ fun EmptyTopBar(title: String) {
         shape = RectangleShape,
         modifier = Modifier
             .fillMaxWidth()
-            .height(75.dp),
+            .height(50.dp),
     ) {
         Box(
             modifier = Modifier.fillMaxSize(),

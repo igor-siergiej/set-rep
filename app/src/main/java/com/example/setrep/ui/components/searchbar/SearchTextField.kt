@@ -25,7 +25,8 @@ import com.example.setrep.model.Movement
 fun SearchTextField(
     text: MutableState<String>,
     movements: List<Movement>,
-    selectedMovement: MutableState<Movement>
+    selectedMovement: MutableState<Movement>,
+    hasItemBeenSelected: MutableState<Boolean>
 ) {
     val active = remember { mutableStateOf(false) }
     SearchBar(
@@ -47,8 +48,8 @@ fun SearchTextField(
                 Icons.Default.Search,
                 contentDescription = "Search",
                 modifier = Modifier
-                    .padding(15.dp)
-                    .size(24.dp)
+                    .padding(10.dp)
+                    .size(30.dp)
             )
         },
         placeholder = {
@@ -69,8 +70,7 @@ fun SearchTextField(
                         Icons.Default.Close,
                         contentDescription = "Close",
                         modifier = Modifier
-                            .padding(15.dp)
-                            .size(24.dp)
+                            .size(30.dp)
                     )
                 }
             }
@@ -80,7 +80,8 @@ fun SearchTextField(
             movementList = movements,
             text = text,
             selectedMovement = selectedMovement,
-            isSearchActive = active
+            isSearchActive = active,
+            hasItemBeenClicked = hasItemBeenSelected
         )
     }
 }
@@ -89,7 +90,8 @@ fun SearchTextField(
 @Composable
 fun SearchViewPreview() {
     val textState = remember { mutableStateOf("test") }
+    val hasItemBeenSelected = remember { mutableStateOf(false) }
     val movement = remember { mutableStateOf(Movement()) }
     val movements = emptyList<Movement>()
-    SearchTextField(textState, movements, movement)
+    SearchTextField(textState, movements, movement,hasItemBeenSelected )
 }

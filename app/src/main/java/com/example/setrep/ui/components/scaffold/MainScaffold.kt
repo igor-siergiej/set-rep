@@ -9,6 +9,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -17,6 +19,9 @@ import com.example.setrep.R
 import com.example.setrep.navigation.Screen
 import com.example.setrep.ui.components.navbar.NavigationBar
 import com.example.setrep.ui.theme.SetRepTheme
+import com.example.setrep.ui.theme.md_theme_light_onTertiary
+import com.example.setrep.ui.theme.md_theme_light_onTertiaryContainer
+import com.example.setrep.ui.theme.md_theme_light_tertiaryContainer
 
 @Composable
 fun MainScaffold(
@@ -41,12 +46,17 @@ fun MainScaffold(
                         restoreState = true
                     }
                 },
+                containerColor = md_theme_light_tertiaryContainer
             ) {
                 Icon(
                     imageVector = Icons.Filled.Add,
-                    contentDescription = stringResource(id = R.string.new_workout)
+                    contentDescription = stringResource(id = R.string.new_workout),
+                    tint = md_theme_light_onTertiaryContainer
                 )
-                Text(text = stringResource(id = R.string.new_workout))
+                Text(
+                    text = stringResource(id = R.string.new_workout),
+                    color = md_theme_light_onTertiaryContainer
+                )
             }
         },
     )
