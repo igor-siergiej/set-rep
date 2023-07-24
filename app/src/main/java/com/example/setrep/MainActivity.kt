@@ -167,8 +167,8 @@ fun main() {
     println(s6) // prints "six"
 }
 
-fun NavigateToScreenWithParam(navController: NavController,screen: Screen, ticks: Any) {
-    navController.navigate("${screen}/${ticks}") {
+fun navigateToScreenWithParam(navController: NavController, screen: Screen, ticks: Any) {
+    navController.navigate("${screen.route}/${ticks}") {
         popUpTo(navController.graph.findStartDestination().id) {
             saveState = true
         }
@@ -176,4 +176,6 @@ fun NavigateToScreenWithParam(navController: NavController,screen: Screen, ticks
         restoreState = true
     }
 }
+
+
 

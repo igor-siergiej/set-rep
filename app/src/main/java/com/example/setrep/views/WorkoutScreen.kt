@@ -35,8 +35,10 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.rememberNavController
 import com.example.setrep.R
 import com.example.setrep.datasource.WorkoutViewModel
+import com.example.setrep.navigateToScreenWithParam
 import com.example.setrep.navigation.Screen
 import com.example.setrep.ui.components.button.ButtonRow
+import com.example.setrep.ui.components.navbar.navigateToNavScreen
 import com.example.setrep.ui.components.scaffold.EmptyScaffold
 import com.example.setrep.ui.components.timer.Timer
 import com.example.setrep.ui.components.topbar.EmptyTopBar
@@ -86,7 +88,6 @@ private fun WorkoutScreenContent(
             ticks++
         }
     }
-
     Column(
         modifier = Modifier.fillMaxHeight()
     ) {
@@ -134,24 +135,12 @@ private fun WorkoutScreenContent(
         ButtonRow(
             leftText = stringResource(id = R.string.new_exercise),
             leftOnClick = {
-                navController.navigate("${Screen.NewExercise.route}/${ticks}") {
-                    popUpTo(navController.graph.findStartDestination().id) {
-                        saveState = true
-                    }
-                    launchSingleTop = true
-                    restoreState = true
-                }
+                navigateToScreenWithParam(navController,Screen.NewExercise,ticks)
             },
             rightText = stringResource(id = R.string.finish_workout),
             rightOnClick = {
                 workoutViewModel.clear()
-                navController.navigate(Screen.Home.route) {
-                    popUpTo(navController.graph.findStartDestination().id) {
-                        saveState = true
-                    }
-                    launchSingleTop = true
-                    restoreState = true
-                }
+                navigateToNavScreen(navController,Screen.Home)
             }
         )
     }
