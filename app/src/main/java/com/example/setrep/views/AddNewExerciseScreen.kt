@@ -1,9 +1,7 @@
 package com.example.setrep.views
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -11,22 +9,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -47,7 +35,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -57,6 +44,7 @@ import com.example.setrep.datasource.WorkoutViewModel
 import com.example.setrep.model.Exercise
 import com.example.setrep.model.Movement
 import com.example.setrep.navigation.Screen
+import com.example.setrep.ui.components.button.ButtonRow
 import com.example.setrep.ui.components.scaffold.EmptyScaffold
 import com.example.setrep.ui.components.searchbar.MovementItem
 import com.example.setrep.ui.components.searchbar.SearchTextField
@@ -125,7 +113,7 @@ private fun AddNewExerciseScreenContent(
 
     minusSetButtonActive.value = sets.size > 0
     addSetButtonActive.value = sets.size < 12
-    
+
     Column(
         modifier = Modifier.fillMaxHeight()
     ) {
@@ -214,57 +202,38 @@ private fun AddNewExerciseScreenContent(
             movement = selectedMovement
         )
 
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(0.dp, 0.dp, 0.dp, 20.dp),
-            horizontalArrangement = Arrangement.SpaceEvenly,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Button(
-                onClick = {
-                    val setsIntArray = ArrayList<Int>()
-                    for (stringSet in sets) {
-                        setsIntArray.add(stringSet.value.toInt())
+        ButtonRow(
+            leftText = stringResource(id = R.string.new_exercise),
+            leftOnClick = {
+                val setsIntArray = ArrayList<Int>()
+                for (stringSet in sets) {
+                    setsIntArray.add(stringSet.value.toInt())
+                }
+                workoutViewModel.addExercise(
+                    Exercise(selectedMovement.value, setsIntArray)
+                )
+                // TODO REMOVE THIS CODE DUPLICATION, HOIST STATE
+                navController.navigate("${Screen.Workout.route}/${ticks}") {
+                    popUpTo(navController.graph.findStartDestination().id) {
+                        saveState = true
                     }
-                    workoutViewModel.addExercise(
-                        Exercise(selectedMovement.value, setsIntArray)
-                    )
-                    // TODO REMOVE THIS CODE DUPLICATION, HOIST STATE
-                    navController.navigate("${Screen.Workout.route}/${ticks}") {
-                        popUpTo(navController.graph.findStartDestination().id) {
-                            saveState = true
-                        }
-                        launchSingleTop = true
-                        restoreState = true
+                    launchSingleTop = true
+                    restoreState = true
+                }
+            },
+            rightText = stringResource(id = R.string.go_back),
+            rightOnClick = {
+                navController.navigate("${Screen.Workout.route}/${ticks}") {
+                    popUpTo(navController.graph.findStartDestination().id) {
+                        saveState = true
                     }
-                }) {
-                Text(text = stringResource(id = R.string.new_exercise))
+                    launchSingleTop = true
+                    restoreState = true
+                }
             }
-
-            OutlinedButton(
-                onClick = {
-                    navController.navigate("${Screen.Workout.route}/${ticks}") {
-                        popUpTo(navController.graph.findStartDestination().id) {
-                            saveState = true
-                        }
-                        launchSingleTop = true
-                        restoreState = true
-                    }
-                }) {
-                Text(text = stringResource(id = R.string.go_back))
-            }
-        }
+        )
     }
 }
-
-
-
-
-
-
-
-
 
 @Preview
 @Composable

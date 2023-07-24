@@ -36,6 +36,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.setrep.R
 import com.example.setrep.datasource.WorkoutViewModel
 import com.example.setrep.navigation.Screen
+import com.example.setrep.ui.components.button.ButtonRow
 import com.example.setrep.ui.components.scaffold.EmptyScaffold
 import com.example.setrep.ui.components.timer.Timer
 import com.example.setrep.ui.components.topbar.EmptyTopBar
@@ -130,14 +131,9 @@ private fun WorkoutScreenContent(
 
         Spacer(modifier.weight(1f))
 
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(0.dp, 0.dp, 0.dp, 20.dp),
-            horizontalArrangement = Arrangement.SpaceEvenly,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Button(onClick = {
+        ButtonRow(
+            leftText = stringResource(id = R.string.new_exercise),
+            leftOnClick = {
                 navController.navigate("${Screen.NewExercise.route}/${ticks}") {
                     popUpTo(navController.graph.findStartDestination().id) {
                         saveState = true
@@ -145,10 +141,9 @@ private fun WorkoutScreenContent(
                     launchSingleTop = true
                     restoreState = true
                 }
-            }) {
-                Text(text = stringResource(id = R.string.new_exercise))
-            }
-            OutlinedButton(onClick = {
+            },
+            rightText = stringResource(id = R.string.finish_workout),
+            rightOnClick = {
                 workoutViewModel.clear()
                 navController.navigate(Screen.Home.route) {
                     popUpTo(navController.graph.findStartDestination().id) {
@@ -157,10 +152,8 @@ private fun WorkoutScreenContent(
                     launchSingleTop = true
                     restoreState = true
                 }
-            }) {
-                Text(text = stringResource(id = R.string.finish_workout))
             }
-        }
+        )
     }
 }
 
