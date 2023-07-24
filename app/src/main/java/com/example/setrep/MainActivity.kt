@@ -12,6 +12,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -164,3 +166,14 @@ fun main() {
     val (_, _, _, _, _, s6) = aList // no compilation error
     println(s6) // prints "six"
 }
+
+fun NavigateToScreenWithParam(navController: NavController,screen: Screen, ticks: Any) {
+    navController.navigate("${screen}/${ticks}") {
+        popUpTo(navController.graph.findStartDestination().id) {
+            saveState = true
+        }
+        launchSingleTop = true
+        restoreState = true
+    }
+}
+

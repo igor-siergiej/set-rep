@@ -39,15 +39,18 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.rememberNavController
+import com.example.setrep.NavigateToScreenWithParam
 import com.example.setrep.R
 import com.example.setrep.datasource.WorkoutViewModel
 import com.example.setrep.model.Exercise
 import com.example.setrep.model.Movement
 import com.example.setrep.navigation.Screen
 import com.example.setrep.ui.components.button.ButtonRow
+import com.example.setrep.ui.components.movementdetails.MovementDetail
+import com.example.setrep.ui.components.movementdetails.MovementDetails
 import com.example.setrep.ui.components.scaffold.EmptyScaffold
-import com.example.setrep.ui.components.searchbar.MovementItem
 import com.example.setrep.ui.components.searchbar.SearchTextField
+import com.example.setrep.ui.components.textfield.RepTextField
 import com.example.setrep.ui.components.topbar.EmptyTopBar
 import kotlinx.coroutines.delay
 import java.util.Date
@@ -159,7 +162,7 @@ private fun AddNewExerciseScreenContent(
                             Text(text = "+")
                         }
 
-                        RepSelector(item = item, index = sets.indexOf(item) + 1)
+                        RepTextField(item = item, index = sets.indexOf(item) + 1)
 
                         Button(
                             enabled = minusRepButtonActive.value,
@@ -198,7 +201,7 @@ private fun AddNewExerciseScreenContent(
 
         Spacer(modifier = Modifier.weight(1f))
 
-        ExerciseDetails(
+        MovementDetails(
             movement = selectedMovement
         )
 
@@ -212,24 +215,11 @@ private fun AddNewExerciseScreenContent(
                 workoutViewModel.addExercise(
                     Exercise(selectedMovement.value, setsIntArray)
                 )
-                // TODO REMOVE THIS CODE DUPLICATION, HOIST STATE
-                navController.navigate("${Screen.Workout.route}/${ticks}") {
-                    popUpTo(navController.graph.findStartDestination().id) {
-                        saveState = true
-                    }
-                    launchSingleTop = true
-                    restoreState = true
-                }
+                NavigateToScreenWithParam(navController,Screen.Workout,ticks)
             },
             rightText = stringResource(id = R.string.go_back),
             rightOnClick = {
-                navController.navigate("${Screen.Workout.route}/${ticks}") {
-                    popUpTo(navController.graph.findStartDestination().id) {
-                        saveState = true
-                    }
-                    launchSingleTop = true
-                    restoreState = true
-                }
+                NavigateToScreenWithParam(navController,Screen.Workout,ticks)
             }
         )
     }
@@ -248,73 +238,3 @@ fun AddNewExerciseScreenPreview() {
     )
 }
 
-
-@Preview
-@Composable
-private fun ExerciseItemPreview() {
-    MovementItem(Movement("test", "test", "test", "test", "test", "test")) {}
-}
-
-@Composable
-fun ExerciseDetail(lable: String, description: String) {
-    Row(
-        modifier = Modifier.padding(2.dp)
-    ) {
-        Text(
-            text = lable,
-            modifier = Modifier.weight(0.35f),
-            style = MaterialTheme.typography.labelLarge
-        )
-        Text(
-            text = description,
-            modifier = Modifier.weight(0.65f)
-        )
-    }
-}
-
-@Composable
-fun ExerciseDetails(movement: MutableState<Movement>) {
-    Column(
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        ExerciseDetail(lable = "Body Part Worked", description = movement.value.bodyPartWorked)
-        ExerciseDetail(lable = "Difficulty Level", description = movement.value.level)
-        ExerciseDetail(lable = "Exercise Type", description = movement.value.type)
-        ExerciseDetail(lable = "Exercise Description", description = movement.value.description)
-        ExerciseDetail(lable = "Equipment Needed", description = movement.value.equipment)
-    }
-}
-
-@Preview
-@Composable
-fun ExerciseDetailsPreview() {
-    val movement =
-        remember { mutableStateOf(Movement("test", "test", "test", "test", "test", "test")) }
-    ExerciseDetails(movement = movement)
-}
-
-@Composable
-fun RepSelector(item: MutableState<String>, index: Int) {
-    val focusRequester = remember { FocusRequester() }
-
-    Text(text = "Set $index")
-
-    TextField(
-        value = item.value,
-        modifier = Modifier
-            .focusRequester(focusRequester)
-            .width(60.dp),
-        onValueChange = {
-            if (it.length <= 2) item.value = it
-        },
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-        singleLine = true,
-        supportingText = {
-            Text(
-                text = "${item.value.length} / 2",
-                modifier = Modifier.fillMaxWidth(),
-                textAlign = TextAlign.End,
-            )
-        },
-    )
-}
