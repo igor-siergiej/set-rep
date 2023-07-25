@@ -27,7 +27,7 @@ fun MovementDetail(label: String, description: String, height: Dp) {
         )
         Text(
             text = description,
-            modifier = Modifier.weight(0.65f).verticalScroll(state = rememberScrollState()),
+            modifier = Modifier.weight(0.65f).verticalScroll(state = rememberScrollState()), // TODO ONLY APPLY THIS TO DESCRIPTION
         )
     }
 }
