@@ -11,4 +11,12 @@ class Profile {
     fun getName(): String {
         return this.name
     }
+
+    fun addWorkout(workout: Workout) {
+        this.workouts.add(workout)
+    }
+
+    fun getAllWorkouts(): ArrayList<Workout> {
+        return this.workouts
+    }
 }

@@ -3,6 +3,7 @@ package com.example.setrep.datasource
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import com.example.setrep.model.Profile
+import com.example.setrep.model.Workout
 import com.google.gson.Gson
 import java.io.BufferedReader
 import java.io.File
@@ -34,5 +35,11 @@ class ProfileViewModel(application: Application) : AndroidViewModel(application)
         textFile.delete()
     }
 
+    fun addWorkout(workout: Workout) {
+        this.profile.addWorkout(workout)
+    }
 
+    fun getAllWorkouts(): ArrayList<Workout> {
+        return this.profile.getAllWorkouts()
+    }
 }

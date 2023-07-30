@@ -81,7 +81,9 @@ private fun BuildNavigationGraph(
     // the NavHost is automatically recomposed.
     // Each composable destination in the graph is associated with a route.
 
-    profileViewModel.deleteProfile()
+    // ================ DEBUG ================
+    //profileViewModel.deleteProfile()
+
     var startingDestination = Screen.Start.route
     if (profileViewModel.doesFileExist()) {
         startingDestination = Screen.Home.route
