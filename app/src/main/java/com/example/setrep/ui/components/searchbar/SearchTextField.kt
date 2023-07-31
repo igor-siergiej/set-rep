@@ -24,7 +24,7 @@ import com.example.setrep.model.Movement
 @Composable
 fun SearchTextField(
     text: MutableState<String>,
-    movements: List<Movement>,
+    filteredMovements: List<Movement>,
     selectedMovement: MutableState<Movement>,
     hasItemBeenSelected: MutableState<Boolean>
 ) {
@@ -77,7 +77,7 @@ fun SearchTextField(
         }
     ) {
         SearchList(
-            movementList = movements,
+            movements = filteredMovements,
             text = text,
             selectedMovement = selectedMovement,
             isSearchActive = active,

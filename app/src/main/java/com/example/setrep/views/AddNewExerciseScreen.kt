@@ -38,10 +38,14 @@ import com.example.setrep.ui.components.button.PlusCircleButton
 import com.example.setrep.ui.components.movementdetails.MovementDetails
 import com.example.setrep.ui.components.scaffold.EmptyScaffold
 import com.example.setrep.ui.components.searchbar.SearchTextField
+import com.example.setrep.ui.components.searchbar.findSimilarity
 import com.example.setrep.ui.components.textfield.RepTextField
 import com.example.setrep.ui.components.textfield.WeightTextField
 import com.example.setrep.ui.components.topbar.EmptyTopBar
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.util.Date
 
 @Composable
@@ -98,7 +102,7 @@ private fun AddNewExerciseScreenContent(
 
     val hasExerciseBeenSelected = remember { mutableStateOf(false) }
 
-    val textState = remember { mutableStateOf("") }
+    val searchText = remember { mutableStateOf("") }
     val selectedMovement = remember { mutableStateOf(Movement()) }
     val sets = remember { mutableStateListOf<MutableState<String>>() }
     val weights = remember { mutableStateListOf<MutableState<String>>() }
@@ -109,6 +113,8 @@ private fun AddNewExerciseScreenContent(
     minusSetButtonActive.value = sets.size > 0
     addSetButtonActive.value = ((sets.size < 12) && hasExerciseBeenSelected.value)
 
+
+
     Column(
         modifier = Modifier.fillMaxHeight()
     ) {
@@ -117,8 +123,8 @@ private fun AddNewExerciseScreenContent(
         Column(
         ) {
             SearchTextField(
-                text = textState,
-                movements = movements,
+                text = searchText,
+                filteredMovements = movements,
                 selectedMovement = selectedMovement,
                 hasItemBeenSelected = hasExerciseBeenSelected
             )
